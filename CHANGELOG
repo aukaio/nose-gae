@@ -1,0 +1,70 @@
+0.2.1
+
+- Added config variables to os.environ. This is important to set before imports
+  that check for Python version in the APPENGINE_RUNTIME environment variable.
+
+0.2.0
+
+- Updated hook for compatibility with SDK 1.6.0+ (#59). 
+
+0.1.9
+
+ - Fixed import hook for compatibility with SDK 1.5.1+ (#50)
+
+0.1.8
+
+- A task queue with something other than a default queue can be accessed in your app under test now 
+  (bugfix from #42)
+
+0.1.7
+
+- Added support for Google App Engine SDK 1.3.1 (#36).  Actually, the 3rd party lib support is identical 
+  to what dev_appserver does now so future lib additions should work seamlessly.
+- Worked around setuptools conflicts that may be introduced by globally installed eggs having the 
+  google namespace, e.g. protobuf (#34).
+
+0.1.6
+
+- Added option --without-sandbox so that import hooks can be bypassed to 
+  use coverage and other edge case modules.  Patch contributed by jgeewax (#26)
+
+0.1.5
+
+- Worked around SDK 1.2.5's way of aggressively adding logging handlers (#25). 
+  Note that this still allows Nose to capture and report your app's log messages.
+  Thanks to Jason H. Smith for the bug report and patch.
+
+0.1.4
+
+- Added support for Google App Engine SDK 1.1.9 (#18).  Thanks to Mahmoud Arram
+  and hackerblinks for patches.
+- Fixed a path issue that causes ImportError on Windows (#19).  Thanks to kveretennicov 
+  for the patch.
+- There is a more informative error now if tests run with something lower than 
+  Python 2.5 (#14).
+
+0.1.3
+
+- Fixed bug in handling of modules shared between sandboxed and
+  non-sandboxed code that caused sys.modules to be empty in sandbox
+  (among other problems). Thanks to Kumar McMillan for the bug report
+  (#2).
+- Changed sys.path munging to ensure that libs that may be in google
+  and system libraries are loaded from google's libdir. Thanks to
+  Kumar McMillan for the bug report and patch (#6).
+- Fixed bug in how the sandbox shared module set was maintained between
+  entries into the sandbox, which could cause a cascade of import errors
+  under certain arrangments of test and app code. Thanks to Kumar McMillan
+  for the bug report (#7).
+  
+0.1.2
+
+- Updated datastore handling to use a nosegae-specific datastore by
+  default. This prevents the test run from clearing the default
+  dev_appserver datastore, as would happen with earlier
+  releases. Thanks to Andy for raising the issue.
+
+0.1.1
+
+- Updated self-test to use trestle so that the resulting documentation
+  is more clear for end users.
