@@ -78,9 +78,16 @@ class NoseGAE(Plugin):
             # import the pseudo dev_appserver (which is really a script)
             # and let it add 3rd party libraries:
             from dev_appserver import fix_sys_path
-            fix_sys_path() # wipes out sys.path
-            sys.path.extend(saved_path) # put back our previous path
-            
+            fix_sys_path()  # Mangles sys.path
+
+            # Uniqify and readd missing path elements
+            # http://www.peterbe.com/plog/uniqifiers-benchmark
+            seen = set()
+            seen_add = seen.add
+            newpath = [x for x in sys.path if x not in seen and not seen_add(x)]
+            newpath.extend([x for x in saved_path if x not in seen and not seen_add(x)])
+            sys.path[:] = newpath
+
             from google.appengine.tools import dev_appserver
 
             # The following variables are set in
@@ -97,6 +104,10 @@ class NoseGAE(Plugin):
             env_dict['APPENGINE_RUNTIME'] = gaeconfig.runtime
             if gaeconfig.runtime == 'python27' and gaeconfig.threadsafe:
                 env_dict['_AH_THREADSAFE'] = '1'
+
+            # Remove python25 paths if runtime is python27, until fixed in SDK
+            if gaeconfig.runtime == 'python27':
+                sys.path[:] = [p for p in sys.path if not p.endswith('webob_0_9')]
 
             from google.appengine.tools.dev_appserver_main import \
                 DEFAULT_ARGS, ARG_CLEAR_DATASTORE, ARG_LOG_LEVEL, \
