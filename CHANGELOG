@@ -1,5 +1,6 @@
 0.2.1
 
+- Added configuration env_variables from GAE 1.6.5
 - Added config variables to os.environ. This is important to set before imports
   that check for Python version in the APPENGINE_RUNTIME environment variable.
 
