@@ -105,6 +105,9 @@ class NoseGAE(Plugin):
             if gaeconfig.runtime == 'python27' and gaeconfig.threadsafe:
                 env_dict['_AH_THREADSAFE'] = '1'
 
+            if gaeconfig.env_variables:
+                env_dict.update(gaeconfig.env_variables)
+
             # Remove python25 paths if runtime is python27, until fixed in SDK
             if gaeconfig.runtime == 'python27':
                 sys.path[:] = [p for p in sys.path if not p.endswith('webob_0_9')]
