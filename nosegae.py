@@ -38,6 +38,9 @@ class NoseGAE(Plugin):
             '--gae-sqlite', default=False, action='store_true', dest='gae_sqlite',
             help='Use the new sqlite datastore stub.')
         parser.add_option(
+            '--gae-require-indexes', default=False, action='store_true', dest='gae_require_indexes',
+            help='Require indexes when instantiating datastore stub.')
+        parser.add_option(
             '--gae-datastore', default=None, action='store', dest='gae_data',
             help='Set the path to the GAE datastore to use in tests. '
             'Note that when using an existing datastore directory, the '
@@ -72,6 +75,7 @@ class NoseGAE(Plugin):
         
         self.sandbox_enabled = options.sandbox_enabled 
         self._use_sqlite = options.gae_sqlite
+        self._require_indexes = options.gae_require_indexes
         
         try:
             if 'google' in sys.modules:
@@ -118,14 +122,16 @@ class NoseGAE(Plugin):
 
             from google.appengine.tools.dev_appserver_main import \
                 DEFAULT_ARGS, ARG_CLEAR_DATASTORE, ARG_LOG_LEVEL, \
-                ARG_DATASTORE_PATH, ARG_HISTORY_PATH, ARG_USE_SQLITE
+                ARG_DATASTORE_PATH, ARG_HISTORY_PATH, ARG_USE_SQLITE, \
+                ARG_REQUIRE_INDEXES
             self._gae = {'dev_appserver': dev_appserver,
                          'ARG_LOG_LEVEL': ARG_LOG_LEVEL,
                          'ARG_CLEAR_DATASTORE': ARG_CLEAR_DATASTORE,
                          'ARG_DATASTORE_PATH': ARG_DATASTORE_PATH,
                          'ARG_HISTORY_PATH': ARG_HISTORY_PATH,
                          'DEFAULT_ARGS': DEFAULT_ARGS,
-                         'ARG_USE_SQLITE': ARG_USE_SQLITE}
+                         'ARG_USE_SQLITE': ARG_USE_SQLITE,
+                         'ARG_REQUIRE_INDEXES': ARG_REQUIRE_INDEXES}
             # prefill these into sys.modules
             import webob
             import yaml
@@ -161,11 +167,13 @@ class NoseGAE(Plugin):
         ds_path = self._gae['ARG_DATASTORE_PATH']
         hs_path = self._gae['ARG_HISTORY_PATH']
         sqlite = self._gae['ARG_USE_SQLITE']
+        require_indexes = self._gae['ARG_REQUIRE_INDEXES']
         dev_appserver = self._gae['dev_appserver']
         gae_opts = args.copy()
         gae_opts["root_path"] = self._path
         gae_opts[clear] = self._temp_data
         gae_opts[sqlite] = self._use_sqlite
+        gae_opts[require_indexes] = self._require_indexes
         gae_opts[ds_path] = self._data_path
         gae_opts[hs_path] = os.path.join(tempfile.gettempdir(),
                                          'nosegae.datastore.history')
