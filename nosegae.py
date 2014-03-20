@@ -96,7 +96,7 @@ class NoseGAE(Plugin):
             newpath.extend([x for x in saved_path if x not in seen and not seen_add(x)])
             sys.path[:] = newpath
 
-            from google.appengine.tools import dev_appserver
+            from google.appengine.tools import old_dev_appserver as dev_appserver
 
             # The following variables are set in
             # DevAppServerRequestHandler._HandleRequest in dev_appserver
